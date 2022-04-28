@@ -15,7 +15,6 @@ public:
 
     Matrix(const size_t &width, const size_t &height) : _width(width), _height(height) {
         _data = new T[_width * _height];
-        std::cout << (unsigned long) _data << "\n";
     }
 
     Matrix(const Matrix<T> &other) : _width(other._width), _height(other._height) {
