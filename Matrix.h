@@ -59,11 +59,15 @@ public:
         delete[] _data;
     }
 
+    const T &at(const size_t &x, const size_t &y) const {
+        return _data[x + y * _width];
+    }
+
     T &at(const size_t &x, const size_t &y) {
         return _data[x + y * _width];
     }
 
-    T &at(const size_t &i) {
+    const T &at(const size_t &i) const {
         return _data[i];
     }
 
