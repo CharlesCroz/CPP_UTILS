@@ -71,6 +71,10 @@ public:
         return _data[i];
     }
 
+    T &at(const size_t &i) {
+        return _data[i];
+    }
+
     size_t get_width() const {
         return _width;
     }
