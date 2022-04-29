@@ -26,8 +26,34 @@ private:
         V _val = {};
     };
 
+public:
     class Iterator {
+    public:
+        explicit Iterator(Node *at) : _at(at) {}
 
+        Iterator(const Iterator &other) : _at(other._at) {}
+
+        ~Iterator() = default;
+
+        Iterator &operator++() {
+            _at = _at->_list[0];
+            return *this;
+        }
+
+        bool operator==(const Iterator &other) const {
+            return _at == other._at;
+        }
+
+        bool operator!=(const Iterator &other) const {
+            return _at != other._at;
+        }
+
+        T &operator*() {
+            return _at->_data;
+        }
+
+    private:
+        Node *_at;
     };
 
 public:
@@ -47,6 +73,14 @@ public:
             delete tmp1;
             tmp1 = tmp2;
         }
+    }
+
+    Iterator begin() {
+        return Iterator(_head->_list[0]);
+    }
+
+    Iterator end() {
+        return Iterator(nullptr);
     }
 
     void set_ratio(const int &ratio) {
@@ -113,7 +147,7 @@ public:
         while (tmp != nullptr) {
             std::cout << "\t" << tmp << "[" << tmp->_val << ":" << tmp->_data
                       << ":l=" << tmp->_list.size() << "(";
-            for (auto &v: tmp->_list) {
+            for (const auto &v: tmp->_list) {
                 std::cout << v << ",";
             }
             std::cout << ")]\n";
