@@ -128,7 +128,7 @@ public:
     T pop() {
         T result = _head->_list[0]->_data;
         Node *tmp = _head->_list[0];
-        for (size_t i = 0; i < _head->_list.size(); ++i) {
+        for (size_t i = 0; i < tmp->_list.size(); ++i) {
             _head->_list[i] = tmp->_list[i];
         }
         delete tmp;
