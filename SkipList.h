@@ -57,11 +57,10 @@ public:
     };
 
 public:
-    explicit SkipList(bool (*comparator)(const V &, const V &)) {
+    explicit SkipList() {
         _head = new Node();
         _head->_list.push_back(nullptr);
         _list_level = 0;
-        _comparator = comparator;
     }
 
     ~SkipList() {
@@ -83,11 +82,12 @@ public:
         return Iterator(nullptr);
     }
 
-    void set_ratio(const int &ratio) {
+    SkipList &set_ratio(const int &ratio) {
         _ratio = ratio;
+        return *this;
     }
 
-    // Add, Remove, Find
+    // Add, Pop
     void add(const T &data, const V &val) {
         Node *new_node = new Node(data, val);
 
@@ -98,7 +98,7 @@ public:
         Node *lookup = insert_after->_list[_list_level];
 
         while (level != (unsigned long) -1) {
-            if (lookup == nullptr || _comparator(val, lookup->_val)) {
+            if (lookup == nullptr || val < lookup->_val) {
                 path_to[level] = insert_after;
                 level--;
             } else {
@@ -139,28 +139,9 @@ public:
         return result;
     }
 
-    void display() const {
-        std::cout << "SL max level : " << _list_level << "\n";
-        Node *tmp = _head;
-        while (tmp != nullptr) {
-            std::cout << "\t" << tmp << "[" << tmp->_val << ":" << tmp->_data
-                      << ":l=" << tmp->_list.size() << "(";
-            for (const auto &v: tmp->_list) {
-                std::cout << v << ",";
-            }
-            std::cout << ")]\n";
-            tmp = tmp->_list[0];
-        }
-        std::cout << "\n";
-    }
-
 private:
-    // Members
     Node *_head = {};
     size_t _list_level = {};
-
-    bool (*_comparator)(const V &, const V &) = {};
-
     int _ratio = 10;
 };
 
