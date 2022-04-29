@@ -132,7 +132,7 @@ public:
             _head->_list[i] = tmp->_list[i];
         }
         delete tmp;
-        if (_head->_list[_list_level] == nullptr) {
+        if (_head->_list[_list_level] == nullptr && _list_level > 0) {
             _list_level--;
             _head->_list.pop_back();
         }
