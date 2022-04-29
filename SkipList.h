@@ -89,7 +89,6 @@ public:
 
     // Add, Remove, Find
     void add(const T &data, const V &val) {
-        std::cout << "Inserting [" << val << ":" << data << "]\n";
         Node *new_node = new Node(data, val);
 
         std::vector<Node *> path_to(_list_level + 1, nullptr);
