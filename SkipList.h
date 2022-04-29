@@ -101,7 +101,6 @@ public:
             if (lookup == nullptr || _comparator(val, lookup->_val)) {
                 path_to[level] = insert_after;
                 level--;
-                lookup = insert_after->_list[level];
             } else {
                 insert_after = lookup;
                 lookup = lookup->_list[level];
@@ -162,7 +161,7 @@ private:
 
     bool (*_comparator)(const V &, const V &) = {};
 
-    int _ratio = 2;
+    int _ratio = 10;
 };
 
 #endif //CPP_UTILS_SKIPLIST_H
