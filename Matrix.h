@@ -33,9 +33,7 @@ public:
         if (&other != this) {
             _width = other._width;
             _height = other._height;
-            if (_data != nullptr) {
-                delete[] _data;
-            }
+            delete[] _data;
             _data = new T[_width * _height];
             for (size_t i = 0; i < (_width * _height); ++i) {
                 _data[i] = other._data[i];
@@ -47,9 +45,7 @@ public:
     Matrix<T> &operator=(Matrix<T> &&other) noexcept {
         _width = other._width;
         _height = other._height;
-        if (_data != nullptr) {
-            delete[] _data;
-        }
+        delete[] _data;
         _data = new T[_width * _height];
         other._data = nullptr;
         return *this;
