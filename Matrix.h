@@ -13,20 +13,25 @@ class Matrix {
 public:
     Matrix() = default;
 
-    Matrix(const size_t &width, const size_t &height) : _width(width), _height(height) {
-        _data = new T[_width * _height];
-    }
+    Matrix(const size_t &width, const size_t &height) : _width(width), _height(height),
+                                                        _data(new T[_width * _height]) {}
 
-    Matrix(const Matrix<T> &other) : _width(other._width), _height(other._height) {
-        _data = new T[_width * _height];
+    Matrix(const Matrix<T> &other) : _width(other._width), _height(other._height),
+                                     _data(new T[other._width * other._height]) {
         for (size_t i = 0; i < (_width * _height); ++i) {
             _data[i] = other._data[i];
         }
     }
 
-    Matrix(Matrix<T> &&other) noexcept: _width(other._width), _height(other._height) {
-        _data = other._data;
+    Matrix(Matrix<T> &&other) noexcept: _width(other._width), _height(other._height), _data(other._data) {
         other._data = nullptr;
+    }
+
+    Matrix(const size_t &width, const size_t &height, const T *val) : _width(width), _height(height),
+                                                                      _data(new T[width * height]) {
+        for (size_t i = 0; i < width * height; ++i) {
+            _data[i] = val[i];
+        }
     }
 
     Matrix<T> &operator=(const Matrix<T> &other) {
