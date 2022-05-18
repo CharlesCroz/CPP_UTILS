@@ -51,8 +51,8 @@ public:
         _width = other._width;
         _height = other._height;
         delete[] _data;
-        _data = new T[_width * _height];
         _data = other._data;
+        other._data = nullptr;
         return *this;
     }
 
