@@ -126,7 +126,15 @@ public:
         return Iterator(this, 0);
     }
 
+    Iterator begin() const {
+        return Iterator(this, 0);
+    }
+
     Iterator end() {
+        return Iterator(this, _width * _height);
+    }
+
+    Iterator end() const {
         return Iterator(this, _width * _height);
     }
 
