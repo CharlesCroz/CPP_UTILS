@@ -52,7 +52,7 @@ public:
         _height = other._height;
         delete[] _data;
         _data = new T[_width * _height];
-        other._data = nullptr;
+        _data = other._data;
         return *this;
     }
 
