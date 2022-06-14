@@ -139,9 +139,9 @@ public:
     }
 
 private:
-    T *_data = {};
-    size_t _width = {};
-    size_t _height = {};
+    T *_data;
+    size_t _width;
+    size_t _height;
 };
 
 #endif //CPP_UTILS_MATRIX_H
