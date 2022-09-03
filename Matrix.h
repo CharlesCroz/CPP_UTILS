@@ -13,20 +13,25 @@ class Matrix {
 public:
     Matrix() = default;
 
-    Matrix(const size_t &width, const size_t &height) : _width(width), _height(height) {
-        _data = new T[_width * _height];
-    }
+    Matrix(const size_t &width, const size_t &height) : _width(width), _height(height),
+                                                        _data(new T[width * height]) {}
 
-    Matrix(const Matrix<T> &other) : _width(other._width), _height(other._height) {
-        _data = new T[_width * _height];
+    Matrix(const Matrix<T> &other) : _width(other._width), _height(other._height),
+                                     _data(new T[other._width * other._height]) {
         for (size_t i = 0; i < (_width * _height); ++i) {
             _data[i] = other._data[i];
         }
     }
 
-    Matrix(Matrix<T> &&other) noexcept: _width(other._width), _height(other._height) {
-        _data = other._data;
+    Matrix(Matrix<T> &&other) noexcept: _width(other._width), _height(other._height), _data(other._data) {
         other._data = nullptr;
+    }
+
+    Matrix(const size_t &width, const size_t &height, const T *val) : _width(width), _height(height),
+                                                                      _data(new T[width * height]) {
+        for (size_t i = 0; i < width * height; ++i) {
+            _data[i] = val[i];
+        }
     }
 
     Matrix<T> &operator=(const Matrix<T> &other) {
@@ -46,7 +51,7 @@ public:
         _width = other._width;
         _height = other._height;
         delete[] _data;
-        _data = new T[_width * _height];
+        _data = other._data;
         other._data = nullptr;
         return *this;
     }
@@ -121,14 +126,22 @@ public:
         return Iterator(this, 0);
     }
 
+    Iterator begin() const {
+        return Iterator(this, 0);
+    }
+
     Iterator end() {
         return Iterator(this, _width * _height);
     }
 
+    Iterator end() const {
+        return Iterator(this, _width * _height);
+    }
+
 private:
-    T *_data = {};
-    size_t _width = {};
-    size_t _height = {};
+    size_t _width = 0;
+    size_t _height = 0;
+    T *_data = nullptr;
 };
 
 #endif //CPP_UTILS_MATRIX_H
