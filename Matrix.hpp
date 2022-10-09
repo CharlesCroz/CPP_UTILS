@@ -19,24 +19,30 @@ public:
 
     Matrix(const Matrix<T> &other) : width(other.width), height(other.height),
                                      data(new T[other.width * other.height]) {
+#pragma omp parallel for default(shared)
         for (size_t i = 0; i < (width * height); ++i) {
             data[i] = other.data[i];
         }
     }
 
-    Matrix(Matrix<T> &&other)
-
-    noexcept: width(other.width), height(other
-    .height),
-    data(other
-    .data) {
+    Matrix(Matrix<T> &&other) : width(other.width), height(other.height),
+                                data(other.data) {
         other.data = nullptr;
     }
 
-    Matrix(const size_t &width, const size_t &height, const T *val) : width(width), height(height),
-                                                                      data(new T[width * height]) {
+    Matrix(const size_t &width, const size_t &height, const T *valTab) : width(width), height(height),
+                                                                         data(new T[width * height]) {
+#pragma omp parallel for default(shared)
         for (size_t i = 0; i < width * height; ++i) {
-            data[i] = val[i];
+            data[i] = valTab[i];
+        }
+    }
+
+    Matrix(const size_t &width, const size_t &height, const T val) : width(width), height(height),
+                                                                     data(new T[width * height]) {
+#pragma omp parallel for default(shared)
+        for (size_t i = 0; i < width * height; ++i) {
+            data[i] = val;
         }
     }
 
@@ -46,6 +52,7 @@ public:
             height = other.height;
             delete[] data;
             data = new T[width * height];
+#pragma omp parallel for default(shared)
             for (size_t i = 0; i < (width * height); ++i) {
                 data[i] = other.data[i];
             }
@@ -53,9 +60,7 @@ public:
         return *this;
     }
 
-    Matrix<T> &operator=(Matrix<T> &&other)
-
-    noexcept {
+    Matrix<T> &operator=(Matrix<T> &&other) {
         width = other.width;
         height = other.height;
         delete[] data;
