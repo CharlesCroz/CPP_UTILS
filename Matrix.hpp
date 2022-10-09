@@ -98,6 +98,10 @@ public:
         return height;
     }
 
+    size_t get_surface() const {
+        return surface;
+    }
+
     T *get_data() {
         return data;
     }
