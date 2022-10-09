@@ -14,11 +14,11 @@ public:
     Matrix() = default;
     Matrix(const size_t &width, const size_t &height);
     Matrix(const Matrix<T> &other);
-    Matrix(Matrix<T> &&other);
+    Matrix(Matrix<T> &&other) noexcept;
     Matrix(const size_t &width, const size_t &height, const T *valTab);
     Matrix(const size_t &width, const size_t &height, const T val);
     Matrix<T> &operator=(const Matrix<T> &other);
-    Matrix<T> &operator=(Matrix<T> &&other);
+    Matrix<T> &operator=(Matrix<T> &&other) noexcept;
     ~Matrix();
 
     const T &at(const size_t &x, const size_t &y) const;
@@ -38,9 +38,9 @@ public:
     public:
         Iterator(Matrix<T> *mat, const size_t &val);
         Iterator(const Iterator &other) = default;
-        Iterator(Iterator &&other) = default;
+        Iterator(Iterator &&other) noexcept = default;
         Iterator &operator=(const Iterator &other) = default;
-        Iterator &operator=(Iterator &&other) = default;
+        Iterator &operator=(Iterator &&other) noexcept = default;
         ~Iterator() = default;
 
         Iterator &operator++();
@@ -104,8 +104,8 @@ Matrix<T>::Matrix(const Matrix<T> &other) : width(other.width), height(other.hei
 }
 
 template<typename T>
-Matrix<T>::Matrix(Matrix<T> &&other) : width(other.width), height(other.height), surface(other.surface),
-                                       data(other.data) {
+Matrix<T>::Matrix(Matrix<T> &&other) noexcept : width(other.width), height(other.height), surface(other.surface),
+                                                data(other.data) {
     other.data = nullptr;
 }
 
@@ -146,7 +146,7 @@ Matrix<T> &Matrix<T>::operator=(const Matrix<T> &other) {
 }
 
 template<typename T>
-Matrix<T> &Matrix<T>::operator=(Matrix<T> &&other) {
+Matrix<T> &Matrix<T>::operator=(Matrix<T> &&other) noexcept {
     width = other.width;
     height = other.height;
     surface = other.surface;
