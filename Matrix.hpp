@@ -88,21 +88,21 @@ public:
     public:
         Iterator(Matrix<T> *mat, const size_t &val) : _mat(mat), _val(val) {}
 
-        Iterator(const Iterator &other) : _mat(other._mat), _val(other._val) {}
-
+        Iterator(const Iterator &other) = default;
+        Iterator(Iterator &&other) = default;
+        Iterator &operator=(const Iterator &other) = default;
+        Iterator &operator=(Iterator &&other) = default;
         ~Iterator() = default;
-
-        Iterator &operator=(const Iterator &other) {
-            if (&other != this) {
-                _mat = other._mat;
-                _val = other._val;
-            }
-            return *this;
-        }
 
         Iterator &operator++() {
             ++_val;
             return *this;
+        }
+
+        Iterator operator++(int) {
+            Iterator old(*this);
+            ++_val;
+            return old;
         }
 
         bool operator==(const Iterator &other) const {
@@ -122,20 +122,58 @@ public:
         size_t _val = {};
     };
 
+    class Const_Iterator {
+    public:
+        Const_Iterator(const Matrix<T> *mat, const size_t &val) : _mat(mat), _val(val) {}
+
+        Const_Iterator(const Const_Iterator &other) = default;
+        Const_Iterator(Const_Iterator &&other) = default;
+        Const_Iterator &operator=(const Const_Iterator &other) = default;
+        Const_Iterator &operator=(Const_Iterator &&other) = default;
+        ~Const_Iterator() = default;
+
+        Const_Iterator &operator++() {
+            ++_val;
+            return *this;
+        }
+
+        Const_Iterator operator++(int) {
+            Const_Iterator old(*this);
+            ++_val;
+            return old;
+        }
+
+        bool operator==(const Const_Iterator &other) const {
+            return (_mat == other._mat && _val == other._val);
+        }
+
+        bool operator!=(const Const_Iterator &other) const {
+            return (_mat != other._mat || _val != other._val);
+        }
+
+        const T &operator*() {
+            return _mat->at(_val);
+        }
+
+    private:
+        const Matrix<T> *_mat;
+        size_t _val = {};
+    };
+
     Iterator begin() {
         return Iterator(this, 0);
     }
 
-    Iterator begin() const {
-        return Iterator(this, 0);
+    Const_Iterator begin() const {
+        return Const_Iterator(this, 0);
     }
 
     Iterator end() {
         return Iterator(this, _width * _height);
     }
 
-    Iterator end() const {
-        return Iterator(this, _width * _height);
+    Const_Iterator end() const {
+        return Const_Iterator(this, _width * _height);
     }
 
 private:
