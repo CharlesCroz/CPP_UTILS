@@ -11,9 +11,9 @@ class Timer {
 public:
     Timer() = default;
     Timer(const Timer &) = default;
-    Timer(Timer &&) noexcept = default;
+    Timer(Timer &&) = default;
     Timer &operator=(const Timer &) = default;
-    Timer &operator=(Timer &&) noexcept = default;
+    Timer &operator=(Timer &&) = default;
     ~Timer() = default;
 
     Timer &start();
