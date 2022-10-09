@@ -6,42 +6,41 @@
 #ifndef CPP_UTILS_MATRIX_H
 #define CPP_UTILS_MATRIX_H
 
-#include <cstdio>
-#include <cstdlib>
+#include <cstdlib> // size_t
 
 template<typename T>
 class Matrix {
 public:
     Matrix() = default;
 
-    Matrix(const size_t &width, const size_t &height) : width(width), height(height),
+    Matrix(const size_t &width, const size_t &height) : width(width), height(height), surface(height*width),
                                                         data(new T[width * height]) {}
 
-    Matrix(const Matrix<T> &other) : width(other.width), height(other.height),
+    Matrix(const Matrix<T> &other) : width(other.width), height(other.height), surface(other.surface),
                                      data(new T[other.width * other.height]) {
-#pragma omp parallel for default(shared)
-        for (size_t i = 0; i < (width * height); ++i) {
+#pragma omp parallel for default(none) shared(other, surface)
+        for (size_t i = 0; i < surface; ++i) {
             data[i] = other.data[i];
         }
     }
 
-    Matrix(Matrix<T> &&other) : width(other.width), height(other.height),
+    Matrix(Matrix<T> &&other) : width(other.width), height(other.height), surface(other.surface),
                                 data(other.data) {
         other.data = nullptr;
     }
 
-    Matrix(const size_t &width, const size_t &height, const T *valTab) : width(width), height(height),
+    Matrix(const size_t &width, const size_t &height, const T *valTab) : width(width), height(height), surface(height*width),
                                                                          data(new T[width * height]) {
-#pragma omp parallel for default(shared)
-        for (size_t i = 0; i < width * height; ++i) {
+#pragma omp parallel for default(none) shared(valTab, surface)
+        for (size_t i = 0; i < surface; ++i) {
             data[i] = valTab[i];
         }
     }
 
-    Matrix(const size_t &width, const size_t &height, const T val) : width(width), height(height),
+    Matrix(const size_t &width, const size_t &height, const T val) : width(width), height(height), surface(height*width),
                                                                      data(new T[width * height]) {
-#pragma omp parallel for default(shared)
-        for (size_t i = 0; i < width * height; ++i) {
+#pragma omp parallel for default(none) shared(val, surface)
+        for (size_t i = 0; i < surface; ++i) {
             data[i] = val;
         }
     }
@@ -50,10 +49,11 @@ public:
         if (&other != this) {
             width = other.width;
             height = other.height;
+            surface = other.surface;
             delete[] data;
-            data = new T[width * height];
-#pragma omp parallel for default(shared)
-            for (size_t i = 0; i < (width * height); ++i) {
+            data = new T[surface];
+#pragma omp parallel for default(none) shared(other, surface)
+            for (size_t i = 0; i < surface; ++i) {
                 data[i] = other.data[i];
             }
         }
@@ -63,6 +63,7 @@ public:
     Matrix<T> &operator=(Matrix<T> &&other) {
         width = other.width;
         height = other.height;
+        surface = other.surface;
         delete[] data;
         data = other.data;
         other.data = nullptr;
@@ -206,16 +207,17 @@ public:
     }
 
     Iterator end() {
-        return Iterator(this, width * height);
+        return Iterator(this, surface);
     }
 
     Const_Iterator end() const {
-        return Const_Iterator(this, width * height);
+        return Const_Iterator(this, surface);
     }
 
 private:
     size_t width = 0;
     size_t height = 0;
+    size_t surface = 0;
     T *data = nullptr;
 };
 
