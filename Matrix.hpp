@@ -1,5 +1,6 @@
 //
 // Created by charles on 28/04/22.
+// Matrix class, row-major
 //
 
 #ifndef CPP_UTILS_MATRIX_H
@@ -13,151 +14,182 @@ class Matrix {
 public:
     Matrix() = default;
 
-    Matrix(const size_t &width, const size_t &height) : _width(width), _height(height),
-                                                        _data(new T[width * height]) {}
+    Matrix(const size_t &width, const size_t &height) : width(width), height(height),
+                                                        data(new T[width * height]) {}
 
-    Matrix(const Matrix<T> &other) : _width(other._width), _height(other._height),
-                                     _data(new T[other._width * other._height]) {
-        for (size_t i = 0; i < (_width * _height); ++i) {
-            _data[i] = other._data[i];
+    Matrix(const Matrix<T> &other) : width(other.width), height(other.height),
+                                     data(new T[other.width * other.height]) {
+        for (size_t i = 0; i < (width * height); ++i) {
+            data[i] = other.data[i];
         }
     }
 
-    Matrix(Matrix<T> &&other) noexcept: _width(other._width), _height(other._height), _data(other._data) {
-        other._data = nullptr;
+    Matrix(Matrix<T> &&other)
+
+    noexcept: width(other.width), height(other
+    .height),
+    data(other
+    .data) {
+        other.data = nullptr;
     }
 
-    Matrix(const size_t &width, const size_t &height, const T *val) : _width(width), _height(height),
-                                                                      _data(new T[width * height]) {
+    Matrix(const size_t &width, const size_t &height, const T *val) : width(width), height(height),
+                                                                      data(new T[width * height]) {
         for (size_t i = 0; i < width * height; ++i) {
-            _data[i] = val[i];
+            data[i] = val[i];
         }
     }
 
     Matrix<T> &operator=(const Matrix<T> &other) {
         if (&other != this) {
-            _width = other._width;
-            _height = other._height;
-            delete[] _data;
-            _data = new T[_width * _height];
-            for (size_t i = 0; i < (_width * _height); ++i) {
-                _data[i] = other._data[i];
+            width = other.width;
+            height = other.height;
+            delete[] data;
+            data = new T[width * height];
+            for (size_t i = 0; i < (width * height); ++i) {
+                data[i] = other.data[i];
             }
         }
         return *this;
     }
 
-    Matrix<T> &operator=(Matrix<T> &&other) noexcept {
-        _width = other._width;
-        _height = other._height;
-        delete[] _data;
-        _data = other._data;
-        other._data = nullptr;
+    Matrix<T> &operator=(Matrix<T> &&other)
+
+    noexcept {
+        width = other.width;
+        height = other.height;
+        delete[] data;
+        data = other.data;
+        other.data = nullptr;
         return *this;
     }
 
     ~Matrix() {
-        delete[] _data;
+        delete[] data;
     }
 
     const T &at(const size_t &x, const size_t &y) const {
-        return _data[x + y * _width];
+        return data[x + y * width];
     }
 
     T &at(const size_t &x, const size_t &y) {
-        return _data[x + y * _width];
+        return data[x + y * width];
     }
 
     const T &at(const size_t &i) const {
-        return _data[i];
+        return data[i];
     }
 
     T &at(const size_t &i) {
-        return _data[i];
+        return data[i];
     }
 
     size_t get_width() const {
-        return _width;
+        return width;
     }
 
     size_t get_height() const {
-        return _height;
+        return height;
+    }
+
+    T *get_data() {
+        return data;
+    }
+
+    const T *get_data() const {
+        return data;
     }
 
     class Iterator {
     public:
-        Iterator(Matrix<T> *mat, const size_t &val) : _mat(mat), _val(val) {}
+        Iterator(Matrix<T> *mat, const size_t &val) : mat(mat), val(val) {}
 
         Iterator(const Iterator &other) = default;
+
         Iterator(Iterator &&other) = default;
+
         Iterator &operator=(const Iterator &other) = default;
+
         Iterator &operator=(Iterator &&other) = default;
+
         ~Iterator() = default;
 
         Iterator &operator++() {
-            ++_val;
+            ++val;
             return *this;
         }
 
         Iterator operator++(int) {
             Iterator old(*this);
-            ++_val;
+            ++val;
             return old;
         }
 
         bool operator==(const Iterator &other) const {
-            return (_mat == other._mat && _val == other._val);
+            return (mat == other.mat && val == other.val);
         }
 
         bool operator!=(const Iterator &other) const {
-            return (_mat != other._mat || _val != other._val);
+            return (mat != other.mat || val != other.val);
         }
 
         T &operator*() {
-            return _mat->at(_val);
+            return mat->at(val);
+        }
+
+        T *operator->() {
+            return &(mat->at(val));
         }
 
     private:
-        Matrix<T> *_mat;
-        size_t _val = {};
+        Matrix<T> *mat;
+        size_t val = {};
     };
 
     class Const_Iterator {
     public:
-        Const_Iterator(const Matrix<T> *mat, const size_t &val) : _mat(mat), _val(val) {}
+        Const_Iterator(const Matrix<T> *mat, const size_t &val) : mat(mat), val(val) {}
 
         Const_Iterator(const Const_Iterator &other) = default;
+
         Const_Iterator(Const_Iterator &&other) = default;
+
         Const_Iterator &operator=(const Const_Iterator &other) = default;
+
         Const_Iterator &operator=(Const_Iterator &&other) = default;
+
         ~Const_Iterator() = default;
 
         Const_Iterator &operator++() {
-            ++_val;
+            ++val;
             return *this;
         }
 
         Const_Iterator operator++(int) {
             Const_Iterator old(*this);
-            ++_val;
+            ++val;
             return old;
         }
 
         bool operator==(const Const_Iterator &other) const {
-            return (_mat == other._mat && _val == other._val);
+            return (mat == other.mat && val == other.val);
         }
 
         bool operator!=(const Const_Iterator &other) const {
-            return (_mat != other._mat || _val != other._val);
+            return (mat != other.mat || val != other.val);
         }
 
         const T &operator*() {
-            return _mat->at(_val);
+            return mat->at(val);
+        }
+
+        const T *operator->() {
+            return &(mat->at(val));
         }
 
     private:
-        const Matrix<T> *_mat;
-        size_t _val = {};
+        const Matrix<T> *mat;
+        size_t val = {};
     };
 
     Iterator begin() {
@@ -169,17 +201,17 @@ public:
     }
 
     Iterator end() {
-        return Iterator(this, _width * _height);
+        return Iterator(this, width * height);
     }
 
     Const_Iterator end() const {
-        return Const_Iterator(this, _width * _height);
+        return Const_Iterator(this, width * height);
     }
 
 private:
-    size_t _width = 0;
-    size_t _height = 0;
-    T *_data = nullptr;
+    size_t width = 0;
+    size_t height = 0;
+    T *data = nullptr;
 };
 
 #endif //CPP_UTILS_MATRIX_H
