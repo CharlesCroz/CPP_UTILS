@@ -89,6 +89,7 @@ private:
 };
 
 // Functions definitions
+
 template<typename T>
 Matrix<T>::Matrix(const size_t &width, const size_t &height) : width(width), height(height), surface(height * width),
                                                                data(new T[width * height]) {}
@@ -251,7 +252,7 @@ typename Matrix<T>::Const_Iterator &Matrix<T>::Const_Iterator::operator++() {
 }
 
 template<typename T>
-typename Matrix<T>::Const_Iterator Matrix<T> ::Const_Iterator::operator++(int) {
+typename Matrix<T>::Const_Iterator Matrix<T>::Const_Iterator::operator++(int) {
     Const_Iterator old(*this);
     ++val;
     return old;
